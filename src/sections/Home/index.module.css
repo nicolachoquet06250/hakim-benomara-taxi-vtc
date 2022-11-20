@@ -32,12 +32,12 @@
 
 .verticalLogo {
     max-width: 400px;
-    width: 100vw;
+    width: calc(100vw - 50px);
     height: 100%;
 }
 
 .horizontalLogo {
     max-width: 400px;
-    width: 100vh;
+    width: calc(100vh - 50px);
     height: 100%;
 }
