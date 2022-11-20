@@ -19,6 +19,7 @@
 }
 
 .completeLogoContainer {
+    width: max-content;
     height: auto;
     flex: 1;
 }
