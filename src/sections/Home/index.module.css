@@ -1,0 +1,34 @@
+.backImg {
+    position: absolute;
+    height: auto;
+    width: 100vmax;
+    z-index: 0;
+}
+
+.completeLogoContainer,
+.downButtonContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-self: flex-end;
+}
+
+.downButtonContainer {
+    height: 100px;
+}
+
+.completeLogoContainer {
+    height: auto;
+    flex: 1;
+}
+
+.completeLogoContainer > img,
+.downButtonContainer > img {
+    position: relative;
+    z-index: 2;
+}
+
+.completeLogoContainer > img {
+    min-width: 300px;
+}

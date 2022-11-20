@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32.229191mm"
+   height="32.234257mm"
+   viewBox="0 0 32.229191 32.234257"
+   version="1.1"
+   id="svg885"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="logo-hakim-benomara-v6-sm.inkscape.svg"
+   inkscape:export-filename="logo-hakim-benomara-v6-sm.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview887"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="6.0079124"
+     inkscape:cx="91.29627"
+     inkscape:cy="59.338415"
+     inkscape:window-width="2400"
+     inkscape:window-height="1271"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs882" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-0.88676363,-1.0273218)">
+    <ellipse
+       style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
+       id="circle1141"
+       cx="17.001358"
+       cy="17.144451"
+       inkscape:label="circle1141"
+       rx="15.614594"
+       ry="15.617129" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.8236px;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:center;text-anchor:middle;fill:#ebebeb;fill-opacity:1;stroke:#000000;stroke-width:0.214502;stroke-dasharray:none;stroke-opacity:1"
+       x="16.840111"
+       y="20.788895"
+       id="text17547"><tspan
+         sodipodi:role="line"
+         id="tspan17545"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.8236px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';fill:#ebebeb;fill-opacity:1;stroke:#000000;stroke-width:0.214502;stroke-dasharray:none;stroke-opacity:1"
+         x="16.840111"
+         y="20.788895">HB</tspan></text>
+    <ellipse
+       style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1"
+       id="ellipse24299"
+       cx="16.958824"
+       cy="17.101738"
+       inkscape:label="circle1141"
+       rx="14.547877"
+       ry="14.55024" />
+    <ellipse
+       style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:0.830561;stroke-dasharray:none;stroke-opacity:1"
+       id="ellipse24301"
+       cx="17.089439"
+       cy="17.144024"
+       inkscape:label="circle1141"
+       rx="12.968887"
+       ry="12.970992" />
+  </g>
+</svg>

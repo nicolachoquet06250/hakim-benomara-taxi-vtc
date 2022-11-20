@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.link-container {
+  border-bottom: 1px solid black;
+}
+
+li.link-container {
+  box-sizing: border-box;
+  border: none;
+}
