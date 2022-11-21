@@ -57,5 +57,5 @@ export default function Map({ currentPosition, routes = [], addresses }) {
         }
     }, [routes])
 
-    return (<div ref={map} style={{ zIndex: 9 }}></div>)
+    return (<div ref={map} style={{ zIndex: 0 }}></div>)
 }
