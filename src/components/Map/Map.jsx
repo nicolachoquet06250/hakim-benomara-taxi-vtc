@@ -44,7 +44,7 @@ export default function Map({ currentPosition, routes = [], addresses }) {
                 
                 L.marker([lastPoint[0], lastPoint[1]])
                     .addTo(initializedMap.current)
-                    .bindPopup(`<center>Arrivée <br /> ${addresses.start}</center>`)
+                    .bindPopup(`<center>Arrivée <br /> ${addresses.end}</center>`)
                     .openPopup();
 
                     
