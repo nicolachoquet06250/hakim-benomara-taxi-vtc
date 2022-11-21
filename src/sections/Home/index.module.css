@@ -45,7 +45,7 @@
 
 .mobileLogo {
     max-width: 100%;
-    min-width: calc(var(--width) - 50px);
+    width: calc(var(--width) - 50px);
 }
 
 .desktopLogo {
