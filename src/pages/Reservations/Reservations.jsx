@@ -90,7 +90,7 @@ export default function Reservations() {
                 console.error(err)
             })
         }
-    }, [coordinates, currentAddress])
+    }, [coordinates])
 
     const showList = ((queryResult.features?.length ?? 0) > 0 && searchFocused) || listFocused;
 

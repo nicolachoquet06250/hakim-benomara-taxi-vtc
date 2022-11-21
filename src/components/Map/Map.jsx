@@ -30,7 +30,7 @@ export default function Map({ currentPosition, routes = [], addresses }) {
 
     useEffect(() => {
         if (initializedMap.current) {
-            console.log(routes);
+            // console.log(routes);
 
             routes.map(r => {
                 r = r.map(c => [...c.reverse()])
