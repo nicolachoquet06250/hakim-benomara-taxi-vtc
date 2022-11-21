@@ -62,6 +62,8 @@
     position: absolute;
     z-index: 10;
     background-color: white;
+    width: auto;
+    max-width: calc(100% - 10px);
 }
 
 .selectionButton {
