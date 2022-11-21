@@ -4,6 +4,7 @@ import OverlayedSection from '../../layouts/OverlayedSection/OverlayedSection';
 import imageHome from '../../assets/image-home.jpg';
 import logo from '../../assets/logo-hakim-benomara-v6-dark.svg';
 import { useEffect, useState } from 'react';
+import { BrowserView, MobileView } from 'react-device-detect';
 
 export default function Home() {
     const [styleLogoClass, setStyleLogoClass] = useState('horizontal');
@@ -40,9 +41,13 @@ export default function Home() {
     return (<OverlayedSection>
         <img src={imageHome} alt="logo home" className={styles.backImg} />
 
-        <div className={styles.completeLogoContainer}>
-            <img src={logo} alt="logo complet" className={styles[styleLogoClass + 'Logo']} />
-        </div>
+        <BrowserView className={styles.completeLogoContainer}>
+            <img src={logo} alt="logo complet" className={styles.desktopLogo} />
+        </BrowserView>
+
+        <MobileView className={styles.completeLogoContainer}>
+            <img src={logo} alt="logo complet" className={styles[styleLogoClass + 'Logo'] + ' ' + styles.mobileLogo} />
+        </MobileView>
 
         <div className={styles.downButtonContainer}>
             <DownButton onClick={onClick} />
