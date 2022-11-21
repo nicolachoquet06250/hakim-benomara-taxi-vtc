@@ -21,6 +21,7 @@ export default function Reservations() {
     const addressList                                       = useRef(null);
     const startAddressList                                       = useRef(null);
     const currentCoordinates                                = useGeolocation();
+    const [_currentCoordinates, setCurrentCoordinates]                                = useState({});
     const [currentAddress, setCurrentAddress]               = useState(null);
     const [totalTravelDistance, setTotalTravelDistance]     = useState(0);
     const [travelRouteItneraire, setTravelRouteItneraire]   = useState([]);
@@ -66,12 +67,13 @@ export default function Reservations() {
     
     useEffect(() => {
         const { longitude, latitude } = currentCoordinates;
+        const { longitude: _longitude, latitude: _latitude } = _currentCoordinates;
 
-        if (latitude !== null && longitude !== null) {
+        if ((latitude !== null && longitude !== null) || (_latitude && _longitude)) {
             // REVERSE API
             (new Openrouteservice.Geocode({ api_key: openRouteService.apiKey })).reverseGeocode({
                 point: {
-                    lat_lng: [latitude, longitude],
+                    lat_lng: [(latitude ?? _latitude), (longitude ?? _longitude)],
                     radius: 50
                 },
                 boundary_country: ['FR']
@@ -81,7 +83,7 @@ export default function Reservations() {
                 setCurrentAddress(best);
             })
         }
-    }, [currentCoordinates]);
+    }, [currentCoordinates, _currentCoordinates]);
 
     useEffect(() => {
         const { lon, lat } = coordinates;
@@ -151,7 +153,7 @@ export default function Reservations() {
                             console.log(text)
                             setStartAddressQuery(text);
                             inputStartAddressSearchRef.current.value = text;
-                            setCoordinates({ lon, lat });
+                            setCurrentCoordinates({ longitude: lon, latitude: lat });
 
                             setStartListFocused(false);
                             setStartSearchFocused(false);
@@ -187,7 +189,7 @@ export default function Reservations() {
         </div>
 
         {queryResult.features && 
-            (<Map currentPosition={{latitude: currentCoordinates.latitude, longitude: currentCoordinates.longitude}} 
+            (<Map currentPosition={{latitude: (currentCoordinates.latitude ?? _currentCoordinates.latitude), longitude: (currentCoordinates.longitude ?? _currentCoordinates.longitude)}} 
                   routes={travelRouteItneraire} 
                   addresses={{ start: (currentAddress?.properties.label ?? ''), end: addressQuery }}
             />)}
