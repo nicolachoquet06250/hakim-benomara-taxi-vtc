@@ -1,6 +1,6 @@
 .list {
     width: max-content;
-    max-width: calc(100% - 40px);
+    max-width: calc(100% - 50px);
     padding: 20px;
     border: 1px solid black;
     border-radius: 5px;
