@@ -23,7 +23,7 @@ export default function Map({ currentPosition, routes = [], addresses }) {
     }
 
     useEffect(() => {
-        if (!initializedMap.current) {
+        if (!initializedMap.current && currentPosition.latitude !== null && currentPosition.longitude !== null) {
             initMap();
         }
     }, [map]);
@@ -33,7 +33,8 @@ export default function Map({ currentPosition, routes = [], addresses }) {
             // console.log(routes);
 
             routes.map(r => {
-                r = r.map(c => [...c.reverse()])
+                r = r.map(c => [...c.reverse()]);
+
                 const firstPoint = r[0];
                 const lastPoint = r[r.length - 1];
 

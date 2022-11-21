@@ -8,30 +8,37 @@ import Map from "../../components/Map/Map";
 
 export default function Reservations() {
     const [addressQuery, setAddressQuery]                   = useState('');
+    const [startAddressQuery, setStartAddressQuery]                   = useState('');
     const [queryResult, setQueryResult]                     = useState([]);
-    const [coordinates, setcoordinates]                     = useState({lon: null, lat: null});
+    const [startQueryResult, setStartQueryResult]                     = useState([]);
+    const [coordinates, setCoordinates]                     = useState({lon: null, lat: null});
     const [loading, setLoading]                             = useState(false);
+    const [startLoading, setStartLoading]                             = useState(false);
     const [searchFocused, setSearchFocused]                 = useState(false);
+    const [startSearchFocused, setStartSearchFocused]                 = useState(false);
     const [listFocused, setListFocused]                     = useState(false);
+    const [startListFocused, setStartListFocused]                     = useState(false);
     const addressList                                       = useRef(null);
+    const startAddressList                                       = useRef(null);
     const currentCoordinates                                = useGeolocation();
     const [currentAddress, setCurrentAddress]               = useState(null);
     const [totalTravelDistance, setTotalTravelDistance]     = useState(0);
     const [travelRouteItneraire, setTravelRouteItneraire]   = useState([]);
     const inputAddressSearchRef                             = useRef(null);
+    const inputStartAddressSearchRef                             = useRef(null);
 
-    const link = `${openRouteService.autocompleteUrl}&text=${addressQuery}&api_key=${openRouteService.apiKey}`;
+    const link = query => `${openRouteService.autocompleteUrl}&text=${query}&api_key=${openRouteService.apiKey}`;
 
-    const makeAutocomplete = useCallback(async () => {
+    const makeAutocomplete = useCallback(async query => {
         setLoading(true);
         // AUTOCIMPLETE API
-        const r = await fetch(link);
+        const r = await fetch(link(query));
         return await r.json();
     }, [link]);
 
     useEffect(() => {
         if (addressQuery !== '') {
-            makeAutocomplete()
+            makeAutocomplete(addressQuery)
                 .then(setQueryResult)
                 .catch(err => console.error(err))
                 .finally(() => setLoading(false))
@@ -39,6 +46,17 @@ export default function Reservations() {
             setQueryResult([]);
         }
     }, [addressQuery]);
+
+    useEffect(() => {
+        if (startAddressQuery !== '') {
+            makeAutocomplete(startAddressQuery)
+                .then(setStartQueryResult)
+                .catch(err => console.error(err))
+                .finally(() => setStartLoading(false))
+        } else {
+            setStartQueryResult([]);
+        }
+    }, [startAddressQuery]);
 
     useEffect(() => {
         console.log(currentCoordinates.loading)
@@ -93,6 +111,7 @@ export default function Reservations() {
     }, [coordinates])
 
     const showList = ((queryResult.features?.length ?? 0) > 0 && searchFocused) || listFocused;
+    const showStartList = ((startQueryResult.features?.length ?? 0) > 0 && startSearchFocused) || startListFocused;
 
     return (<div className={styles.container}>
         <div>
@@ -110,8 +129,37 @@ export default function Reservations() {
                 
             {totalTravelDistance !== 0 ? <>Le trajet sera de : {totalTravelDistance}km, ( <b>{Math.round(totalTravelDistance) * .5}€</b> )<br /></> : null}
 
+            {(currentCoordinates.latitude === null || currentCoordinates.longitude === null) && 
+                (<input  type='text' 
+                         placeholder="Saisissez l'adresse de départ ici"
+                         ref={inputStartAddressSearchRef}
+                         className={styles.addressSearch}
+                         defaultValue={startAddressQuery} 
+                         onInput={e => setStartAddressQuery(e.target.value)} 
+                         onFocus={() => setStartSearchFocused(true)} 
+                         onBlur={() => setTimeout(() => {setStartSearchFocused(false)}, 150)} />)}
+
+            <div className={styles.autocompletionContainer}>
+                {(currentCoordinates.latitude === null || currentCoordinates.longitude === null) && showStartList && 
+                    (<AddressList 
+                        list={startQueryResult.features} 
+                        ref={startAddressList}
+                        query={startQueryResult.geocoding.query} 
+                        loading={startLoading}
+                        onClick={() => setStartListFocused(true)}
+                        onSelected={({ lon, lat, text }) => {
+                            console.log(text)
+                            setStartAddressQuery(text);
+                            inputStartAddressSearchRef.current.value = text;
+                            setCoordinates({ lon, lat });
+
+                            setStartListFocused(false);
+                            setStartSearchFocused(false);
+                        }} />)}
+            </div>
+
             <input  type='text' 
-                    placeholder="Saisissez l'adresse ici"
+                    placeholder="Saisissez l'adresse d'arrivé ici"
                     ref={inputAddressSearchRef}
                     className={styles.addressSearch}
                     defaultValue={addressQuery} 
@@ -130,7 +178,7 @@ export default function Reservations() {
                                     console.log(text)
                                     setAddressQuery(text);
                                     inputAddressSearchRef.current.value = text;
-                                    setcoordinates({ lon, lat });
+                                    setCoordinates({ lon, lat });
 
                                     setListFocused(false);
                                     setSearchFocused(false);
@@ -141,7 +189,7 @@ export default function Reservations() {
         {queryResult.features && 
             (<Map currentPosition={{latitude: currentCoordinates.latitude, longitude: currentCoordinates.longitude}} 
                   routes={travelRouteItneraire} 
-                  addresses={{ start: currentAddress.properties.label, end: addressQuery }}
+                  addresses={{ start: (currentAddress?.properties.label ?? ''), end: addressQuery }}
             />)}
     </div>);
 };
