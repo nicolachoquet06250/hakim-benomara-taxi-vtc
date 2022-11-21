@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build ; cp .htaccess dist/",
+    "build": "cp nodes_modules/leaflet/dist/images/* ./public/ ; vite build ; cp .htaccess dist/",
     "preview": "vite preview"
   },
   "dependencies": {
