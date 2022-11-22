@@ -16,9 +16,7 @@ export default function Link({ tag = '', to = '/', className, children, onSelect
 
     useEffect(() => {
         if (active && containerRef.current) {
-            setTimeout(() => {
-                onSelected({ width: containerRef.current?.offsetWidth });
-            }, 1000);
+            onSelected({ width: containerRef.current?.offsetWidth });
         }
     }, [active]);
 

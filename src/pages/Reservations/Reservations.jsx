@@ -117,29 +117,31 @@ export default function Reservations() {
 
     return (<div className={styles.container}>
         <div>
-            {currentAddress && <>
-                <details>
-                    <summary>
-                        Vous êtes actuellement ici : 
-                    </summary>
-                    
-                    {currentAddress.properties.label}
-                </details>
-            
-                <br />
-            </>}
+            <h1> Réservez une course </h1>
+
+            <p>
+                Saisissez {currentCoordinates.latitude === null || currentCoordinates.longitude === null ? <>Votre adresse de départ et</> : null} 
+                votre adresse d'arrivée pour calculer l'itinérère le plus court et ainsi calculer le prix de votre course.
+            </p>
                 
             {totalTravelDistance !== 0 ? <>Le trajet sera de : {totalTravelDistance}km, ( <b>{Math.round(totalTravelDistance) * .5}€</b> )<br /></> : null}
 
+            {currentAddress && 
+                (<input type='text' 
+                        disabled={true}
+                        ref={inputStartAddressSearchRef}
+                        className={styles.addressSearch}
+                        defaultValue={currentAddress.properties.label} />)}
+
             {(currentCoordinates.latitude === null || currentCoordinates.longitude === null) && 
-                (<input  type='text' 
-                         placeholder="Saisissez l'adresse de départ ici"
-                         ref={inputStartAddressSearchRef}
-                         className={styles.addressSearch}
-                         defaultValue={startAddressQuery} 
-                         onInput={e => setStartAddressQuery(e.target.value)} 
-                         onFocus={() => setStartSearchFocused(true)} 
-                         onBlur={() => setTimeout(() => {setStartSearchFocused(false)}, 150)} />)}
+                (<input type='text' 
+                        placeholder="Saisissez l'adresse de départ ici"
+                        ref={inputStartAddressSearchRef}
+                        className={styles.addressSearch}
+                        defaultValue={startAddressQuery} 
+                        onInput={e => setStartAddressQuery(e.target.value)} 
+                        onFocus={() => setStartSearchFocused(true)} 
+                        onBlur={() => setTimeout(() => {setStartSearchFocused(false)}, 150)} />)}
 
             <div className={styles.autocompletionContainer}>
                 {(currentCoordinates.latitude === null || currentCoordinates.longitude === null) && showStartList && 
@@ -188,10 +190,9 @@ export default function Reservations() {
             </div>
         </div>
 
-        {queryResult.features && 
-            (<Map currentPosition={{latitude: (currentCoordinates.latitude ?? _currentCoordinates.latitude), longitude: (currentCoordinates.longitude ?? _currentCoordinates.longitude)}} 
-                  routes={travelRouteItneraire} 
-                  addresses={{ start: (currentAddress?.properties.label ?? ''), end: addressQuery }}
-            />)}
+        <Map currentPosition={{latitude: (currentCoordinates.latitude ?? _currentCoordinates.latitude), longitude: (currentCoordinates.longitude ?? _currentCoordinates.longitude)}} 
+             routes={travelRouteItneraire} 
+             addresses={{ start: (currentAddress?.properties.label ?? ''), end: addressQuery }}
+        />
     </div>);
 };

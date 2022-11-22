@@ -1,4 +1,3 @@
-import { /*Link,*/ redirect } from "react-router-dom";
 import Link from "../Link/Link";
 import logo from '../../assets/logo-hakim-benomara-v6-dark-sm.svg';
 import styles from './index.module.css';
