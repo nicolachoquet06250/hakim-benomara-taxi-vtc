@@ -8,25 +8,26 @@ import Map from "../../components/Map/Map";
 
 export default function Reservations() {
     const [addressQuery, setAddressQuery]                   = useState('');
-    const [startAddressQuery, setStartAddressQuery]                   = useState('');
+    const [startAddressQuery, setStartAddressQuery]         = useState('');
     const [queryResult, setQueryResult]                     = useState([]);
-    const [startQueryResult, setStartQueryResult]                     = useState([]);
+    const [startQueryResult, setStartQueryResult]           = useState([]);
     const [coordinates, setCoordinates]                     = useState({lon: null, lat: null});
     const [loading, setLoading]                             = useState(false);
-    const [startLoading, setStartLoading]                             = useState(false);
+    const [startLoading, setStartLoading]                   = useState(false);
     const [searchFocused, setSearchFocused]                 = useState(false);
-    const [startSearchFocused, setStartSearchFocused]                 = useState(false);
+    const [startSearchFocused, setStartSearchFocused]       = useState(false);
     const [listFocused, setListFocused]                     = useState(false);
-    const [startListFocused, setStartListFocused]                     = useState(false);
+    const [startListFocused, setStartListFocused]           = useState(false);
     const addressList                                       = useRef(null);
-    const startAddressList                                       = useRef(null);
+    const startAddressList                                  = useRef(null);
     const currentCoordinates                                = useGeolocation();
-    const [_currentCoordinates, setCurrentCoordinates]                                = useState({});
+    const [_currentCoordinates, setCurrentCoordinates]      = useState({});
     const [currentAddress, setCurrentAddress]               = useState(null);
     const [totalTravelDistance, setTotalTravelDistance]     = useState(0);
     const [travelRouteItneraire, setTravelRouteItneraire]   = useState([]);
     const inputAddressSearchRef                             = useRef(null);
-    const inputStartAddressSearchRef                             = useRef(null);
+    const inputStartAddressSearchRef                        = useRef(null);
+    const lastGeolocalisationLoadingState                   = useRef(true);
 
     const link = query => `${openRouteService.autocompleteUrl}&text=${query}&api_key=${openRouteService.apiKey}`;
 
@@ -59,29 +60,30 @@ export default function Reservations() {
         }
     }, [startAddressQuery]);
 
-    useEffect(() => {
-        console.log(currentCoordinates.loading)
-    }, [currentCoordinates]);
-
     useClickAway(addressList, () => setListFocused(false));
     
     useEffect(() => {
-        const { longitude, latitude } = currentCoordinates;
-        const { longitude: _longitude, latitude: _latitude } = _currentCoordinates;
+        if (currentCoordinates && currentCoordinates.loading !== lastGeolocalisationLoadingState.current) {
+            const { longitude, latitude } = currentCoordinates;
+            const { longitude: _longitude, latitude: _latitude } = _currentCoordinates;
 
-        if ((latitude !== null && longitude !== null) || (_latitude && _longitude)) {
-            // REVERSE API
-            (new Openrouteservice.Geocode({ api_key: openRouteService.apiKey })).reverseGeocode({
-                point: {
-                    lat_lng: [(latitude ?? _latitude), (longitude ?? _longitude)],
-                    radius: 50
-                },
-                boundary_country: ['FR']
-            }).then(json => {
-                const best = json.features.reduce((r, c) => r === null || c.properties.confidence > r.properties.confidence ? c : r, null);
+            console.log(currentCoordinates.loading);
 
-                setCurrentAddress(best);
-            })
+            if ((latitude !== null && longitude !== null) || (_latitude && _longitude)) {
+                // REVERSE API
+                (new Openrouteservice.Geocode({ api_key: openRouteService.apiKey })).reverseGeocode({
+                    point: {
+                        lat_lng: [(latitude ?? _latitude), (longitude ?? _longitude)],
+                        radius: 50
+                    },
+                    boundary_country: ['FR']
+                }).then(json => {
+                    const best = json.features.reduce((r, c) => r === null || c.properties.confidence > r.properties.confidence ? c : r, null);
+
+                    setCurrentAddress(best);
+                })
+            }
+            lastGeolocalisationLoadingState.current = currentCoordinates.loading;
         }
     }, [currentCoordinates, _currentCoordinates]);
 
