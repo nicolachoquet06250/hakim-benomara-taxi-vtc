@@ -1,6 +1,7 @@
-import Link from "../Link/Link";
+import Link from "../Link/Link.jsx";
 import logo from '../../assets/logo-hakim-benomara-v6-dark-sm.svg';
 import styles from './index.module.css';
+import Button from '../Button/Button.jsx';
 
 export const menu = [
     {
@@ -28,12 +29,10 @@ export default function Sidebar({ opened = false, onClose = () => null }) {
 
         <aside className={styles.aside + ' ' + (opened ? styles.asideOpened : '')}>
             <header>
-                <button onClick={e => {
+                <Button icon="arrow-right-from-bracket" onClick={e => {
                     e.preventDefault();
                     onClose(e);
-                }}>
-                    <i className="fa-solid fa-arrow-right-from-bracket" />
-                </button>
+                }} />
 
                 <img src={logo} alt="logo simplifié" />
             </header>
@@ -41,7 +40,12 @@ export default function Sidebar({ opened = false, onClose = () => null }) {
             <main>
                 <ul>
                     {menu.map((item, i) => 
-                        (<Link tag='li' key={i} to={item.href}>
+                        (<Link  tag='li' 
+                                key={i}
+                                to={item.href}
+                                onSelected={e => {
+                                    onClose(e);
+                                }}>
                             {item.label}
                         </Link>))}
                 </ul>

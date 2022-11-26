@@ -1,12 +1,9 @@
 import { forwardRef } from "react";
-import Loader from "../Loader/Loader";
+import Loader from "../Loader/Loader.jsx";
 import styles from './index.module.css';
 import { openRouteService } from '../../helpers/apiCredentials.json';
 
 export default forwardRef(function AddressList({ list = [], query = {}, loading, onClick = () => null, onSelected = () => null }, ref) {
-    // console.log('results', list);
-    // console.log('query', query);
-
     return (<div ref={ref} className={styles.list} onClick={onClick}>
         {list.map((item, i) => 
             (<div key={i} onClick={onClick}>

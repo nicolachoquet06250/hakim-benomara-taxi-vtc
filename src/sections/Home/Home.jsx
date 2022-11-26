@@ -1,6 +1,6 @@
 import styles from './index.module.css';
-import DownButton from "../../components/DownButton/DownButton";
-import OverlayedSection from '../../layouts/OverlayedSection/OverlayedSection';
+import DownButton from "../../components/DownButton/DownButton.jsx";
+import OverlayedSection from '../../layouts/OverlayedSection/OverlayedSection.jsx';
 import imageHome from '../../assets/image-home.jpg';
 import logo from '../../assets/logo-hakim-benomara-v6-dark.svg';
 import { useEffect, useState } from 'react';

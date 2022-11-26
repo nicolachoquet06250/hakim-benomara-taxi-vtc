@@ -1,6 +1,6 @@
 import styles from './index.module.css';
-import Section from "../../layouts/Section/Section";
-import Menu from "../../components/Menu";
+import Section from "../../layouts/Section/Section.jsx";
+import Menu from "../../components/Menu.jsx";
 import { Outlet } from 'react-router-dom';
 
 export default function Sectionned() {

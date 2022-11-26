@@ -1,7 +1,14 @@
 .section {
     height: 100vh;
+    
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/9/96/France_autoroutes_map-fr.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 
 .outletContainer {
     padding: 10px;
+    backdrop-filter: blur(4px);
+    height: calc(100% - 120px);;
 }

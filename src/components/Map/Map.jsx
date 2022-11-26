@@ -12,20 +12,25 @@ export default function Map({ currentPosition, routes = [], addresses }) {
         endMarker: null,
         path: null
     });
-    const hasCurrentPosition = useRef(currentPosition.latitude && currentPosition.longitude);
+    const hasCurrentPosition = useRef(!!(
+        currentPosition.latitude && 
+        currentPosition.longitude
+    ));
 
     useEffect(() => {
-        hasCurrentPosition.current = currentPosition.latitude && currentPosition.longitude;
+        hasCurrentPosition.current = !!(
+            currentPosition.latitude && 
+            currentPosition.longitude
+        );
     }, [currentPosition]);
 
     useEffect(() => {
         if (!initializedMap.current) {
-            const centeredPoint = hasCurrentPosition.current ? [currentPosition.latitude, currentPosition.longitude] : [0, 0];
-            
-            console.log(centeredPoint);
+            const franceCenter = [46.227638, 2.213749];
+            const centeredPoint = hasCurrentPosition.current ? [currentPosition.latitude, currentPosition.longitude] : franceCenter;
             
             // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
-            initializedMap.current = L.map(map.current).setView(centeredPoint, 11);
+            initializedMap.current = L.map(map.current).setView(centeredPoint, 6);
 
             if (hasCurrentPosition.current) {
                 localisationMarker.current?.getElement().remove();
@@ -38,7 +43,7 @@ export default function Map({ currentPosition, routes = [], addresses }) {
             // Leaflet ne récupère pas les cartes (tiles) sur un serveur par défaut. Nous devons lui préciser où nous souhaitons les récupérer. Ici, openstreetmap.fr
             L.tileLayer(openstreetmap.layer, {
                 // Il est toujours bien de laisser le lien vers la source des données
-                attribution: 'données © <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL - rendu <a href="//openstreetmap.fr">OSM France</a>',
+                attribution: /*html*/`données © <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL - rendu <a href="//openstreetmap.fr">OSM France</a>`,
                 minZoom: 1,
                 maxZoom: 20
             }).addTo(initializedMap.current);
@@ -46,53 +51,53 @@ export default function Map({ currentPosition, routes = [], addresses }) {
     }, [map]);
 
     useEffect(() => {
-        if (hasCurrentPosition.current) {
-            localisationMarker.current?.getElement().remove();
+        if (initializedMap.current) {            
+            if (hasCurrentPosition.current) {
+                localisationMarker.current?.getElement().remove();
 
-            initializedMap.current.setView([currentPosition.latitude, currentPosition.longitude], 11);
+                initializedMap.current.setView([currentPosition.latitude, currentPosition.longitude], 11);
+    
+                localisationMarker.current = L.marker([currentPosition.latitude, currentPosition.longitude])
+                    .addTo(initializedMap.current)
+                    .bindPopup(`<center>Vous êtes ici<br />${addresses.start}</center`)
+                    .openPopup();
 
-            localisationMarker.current = L.marker([currentPosition.latitude, currentPosition.longitude])
-                .addTo(initializedMap.current)
-                .bindPopup(`<center>Vous êtes ici<br />${addresses.start}</center`)
-                .openPopup();
+                if (addresses.start && addresses.end) {
+                    localisationMarker.current?.getElement().remove();
+                    
+                    routes.map(r => {
+                        r = r.map(c => [...c.reverse()]);
+        
+                        const firstPoint = r[0];
+                        const lastPoint = r[r.length - 1];
+        
+                        directionsElements.current.startMarker?.getElement().remove();
+                        directionsElements.current.endMarker?.getElement().remove();
+                        directionsElements.current.path?.remove();
+        
+                        directionsElements.current = {
+                            ...directionsElements.current,
+        
+                            startMarker: L.marker([firstPoint[0], firstPoint[1]])
+                                .addTo(initializedMap.current)
+                                .bindPopup(`<center>Départ <br /> ${addresses.start}</center>`)
+                                .openPopup(),
+        
+                            endMarker: L.marker([lastPoint[0], lastPoint[1]])
+                                .addTo(initializedMap.current)
+                                .bindPopup(`<center>Arrivée <br /> ${addresses.end}</center>`)
+                                .openPopup(),
+                                
+                            path: L.polyline(r, {color: 'red'}).addTo(initializedMap.current)
+                        };
+        
+                        // zoom the map to the polyline
+                        initializedMap.current.fitBounds(directionsElements.current.path.getBounds());
+                    })
+                }
+            }
         }
-    }, [hasCurrentPosition.current])
-
-    useEffect(() => {
-        if (initializedMap.current) {
-            // console.log(routes);
-
-            routes.map(r => {
-                r = r.map(c => [...c.reverse()]);
-
-                const firstPoint = r[0];
-                const lastPoint = r[r.length - 1];
-
-                directionsElements.current.startMarker?.getElement().remove();
-                directionsElements.current.endMarker?.getElement().remove();
-                directionsElements.current.path?.remove();
-
-                directionsElements.current = {
-                    ...directionsElements.current,
-
-                    startMarker: L.marker([firstPoint[0], firstPoint[1]])
-                        .addTo(initializedMap.current)
-                        .bindPopup(`<center>Départ <br /> ${addresses.start}</center>`)
-                        .openPopup(),
-
-                    endMarker: L.marker([lastPoint[0], lastPoint[1]])
-                        .addTo(initializedMap.current)
-                        .bindPopup(`<center>Arrivée <br /> ${addresses.end}</center>`)
-                        .openPopup(),
-                        
-                    path: L.polyline(r, {color: 'red'}).addTo(initializedMap.current)
-                };
-
-                // zoom the map to the polyline
-                initializedMap.current.fitBounds(directionsElements.current.path.getBounds());
-            })
-        }
-    }, [routes])
+    }, [routes, addresses])
 
     return (<div ref={map} style={{ zIndex: 0, minHeight: '40%' }}></div>)
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Navbar from "./Navbar/Navbar";
-import Sidebar from "./Sidebar/Sidebar";
+import Navbar from "./Navbar/Navbar.jsx";
+import Sidebar from "./Sidebar/Sidebar.jsx";
 
 export default function Menu() {
     const [isSidebarOpened, setIsSidebarOpened] = useState(false);

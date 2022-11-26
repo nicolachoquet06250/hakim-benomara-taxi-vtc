@@ -1,17 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useClickAway, useGeolocation } from 'react-use';
-import AddressList from "./AddressList";
+import AddressList from "./AddressList.jsx";
 import styles from './index.module.css';
 import { openRouteService } from '../../helpers/apiCredentials.json';
 import Openrouteservice from 'openrouteservice-js';
-import Map from "../../components/Map/Map";
+import Map from "../../components/Map/Map.jsx";
 
 export default function Reservations() {
     const [addressQuery, setAddressQuery]                   = useState('');
+    const [tmpAddressQuery, setTmpAddressQuery]             = useState('');
     const [startAddressQuery, setStartAddressQuery]         = useState('');
+    const [tmpStartAddressQuery, setTmpStartAddressQuery]   = useState('');
     const [queryResult, setQueryResult]                     = useState([]);
     const [startQueryResult, setStartQueryResult]           = useState([]);
-    const [coordinates, setCoordinates]                     = useState({lon: null, lat: null});
+    const [coordinates, setCoordinates]                     = useState({
+        lon: null, 
+        lat: null
+    });
     const [loading, setLoading]                             = useState(false);
     const [startLoading, setStartLoading]                   = useState(false);
     const [searchFocused, setSearchFocused]                 = useState(false);
@@ -29,6 +34,15 @@ export default function Reservations() {
     const inputStartAddressSearchRef                        = useRef(null);
     const lastGeolocalisationLoadingState                   = useRef(true);
 
+    const [addresses, setAddresses]                         = useState({
+        start: '',
+        end: ''
+    });
+    const [currentPosition, setCurrentPosition]             = useState({
+        latitude: 0,
+        longitude: 0
+    });
+
     const link = query => `${openRouteService.autocompleteUrl}&text=${query}&api_key=${openRouteService.apiKey}`;
 
     const makeAutocomplete = useCallback(async query => {
@@ -39,35 +53,33 @@ export default function Reservations() {
     }, [link]);
 
     useEffect(() => {
-        if (addressQuery !== '') {
-            makeAutocomplete(addressQuery)
+        if (tmpAddressQuery !== '') {
+            makeAutocomplete(tmpAddressQuery)
                 .then(setQueryResult)
                 .catch(err => console.error(err))
                 .finally(() => setLoading(false))
         } else {
             setQueryResult([]);
         }
-    }, [addressQuery]);
+    }, [tmpAddressQuery]);
 
     useEffect(() => {
-        if (startAddressQuery !== '') {
-            makeAutocomplete(startAddressQuery)
+        if (tmpStartAddressQuery !== '') {
+            makeAutocomplete(tmpStartAddressQuery)
                 .then(setStartQueryResult)
                 .catch(err => console.error(err))
                 .finally(() => setStartLoading(false))
         } else {
             setStartQueryResult([]);
         }
-    }, [startAddressQuery]);
+    }, [tmpStartAddressQuery]);
 
     useClickAway(addressList, () => setListFocused(false));
     
     useEffect(() => {
-        if (currentCoordinates && currentCoordinates.loading !== lastGeolocalisationLoadingState.current) {
+        // if (currentCoordinates && currentCoordinates.loading !== lastGeolocalisationLoadingState.current) {
             const { longitude, latitude } = currentCoordinates;
             const { longitude: _longitude, latitude: _latitude } = _currentCoordinates;
-
-            console.log(currentCoordinates.loading);
 
             if ((latitude !== null && longitude !== null) || (_latitude && _longitude)) {
                 // REVERSE API
@@ -84,7 +96,7 @@ export default function Reservations() {
                 })
             }
             lastGeolocalisationLoadingState.current = currentCoordinates.loading;
-        }
+        // }
     }, [currentCoordinates, _currentCoordinates]);
 
     useEffect(() => {
@@ -105,14 +117,38 @@ export default function Reservations() {
                 maneuvers:"false",
             })
             .then(json => {
-                console.log(json)
                 setTotalTravelDistance(json.features.map(r => r.properties.summary.distance).reduce((r, c) => r + c, 0));
                 setTravelRouteItneraire(json.features.map(r => r.geometry.coordinates));
             }).catch(err => {
                 console.error(err)
             })
         }
-    }, [coordinates])
+    }, [coordinates]);
+
+    useEffect(() => {
+        if (
+            addresses.start !== (currentAddress?.properties.label ?? '') || 
+            addresses.start !== (startAddressQuery ?? '') || 
+            addresses.end !== (addressQuery ?? '')
+        ) {
+            setAddresses({
+                start: ((currentAddress?.properties.label ?? startAddressQuery) ?? ''),
+                end: addressQuery
+            });
+        }
+    }, [currentAddress, startAddressQuery, addressQuery]);
+
+    useEffect(() => {
+        if (
+            currentPosition.latitude !== ((currentCoordinates.latitude ?? _currentCoordinates.latitude) ?? 0) || 
+            currentPosition.longitude !== ((currentCoordinates.longitude ?? _currentCoordinates.longitude) ?? 0)
+        ) {
+            setCurrentPosition({
+                latitude: ((currentCoordinates.latitude ?? _currentCoordinates.latitude) ?? 0), 
+                longitude: ((currentCoordinates.longitude ?? _currentCoordinates.longitude) ?? 0)
+            });
+        }
+    }, [currentCoordinates, _currentCoordinates]);
 
     const showList = ((queryResult.features?.length ?? 0) > 0 && searchFocused) || listFocused;
     const showStartList = ((startQueryResult.features?.length ?? 0) > 0 && startSearchFocused) || startListFocused;
@@ -128,7 +164,7 @@ export default function Reservations() {
                 
             {totalTravelDistance !== 0 ? <>Le trajet sera de : {totalTravelDistance}km, ( <b>{Math.round(totalTravelDistance) * .5}€</b> )<br /></> : null}
 
-            {currentAddress && 
+            {!(currentCoordinates.latitude === null || currentCoordinates.longitude === null) && 
                 (<input type='text' 
                         disabled={true}
                         ref={inputStartAddressSearchRef}
@@ -140,10 +176,15 @@ export default function Reservations() {
                         placeholder="Saisissez l'adresse de départ ici"
                         ref={inputStartAddressSearchRef}
                         className={styles.addressSearch}
-                        defaultValue={startAddressQuery} 
-                        onInput={e => setStartAddressQuery(e.target.value)} 
+                        defaultValue={tmpStartAddressQuery} 
+                        onInput={e => setTmpStartAddressQuery(e.target.value)} 
                         onFocus={() => setStartSearchFocused(true)} 
-                        onBlur={() => setTimeout(() => {setStartSearchFocused(false)}, 150)} />)}
+                        onBlur={() => {
+                            setTimeout(() => {
+                                setStartSearchFocused(false)
+                                setStartAddressQuery(tmpStartAddressQuery)
+                            }, 150)
+                        }} />)}
 
             <div className={styles.autocompletionContainer}>
                 {(currentCoordinates.latitude === null || currentCoordinates.longitude === null) && showStartList && 
@@ -154,7 +195,6 @@ export default function Reservations() {
                         loading={startLoading}
                         onClick={() => setStartListFocused(true)}
                         onSelected={({ lon, lat, text }) => {
-                            console.log(text)
                             setStartAddressQuery(text);
                             inputStartAddressSearchRef.current.value = text;
                             setCurrentCoordinates({ longitude: lon, latitude: lat });
@@ -168,8 +208,8 @@ export default function Reservations() {
                     placeholder="Saisissez l'adresse d'arrivé ici"
                     ref={inputAddressSearchRef}
                     className={styles.addressSearch}
-                    defaultValue={addressQuery} 
-                    onInput={e => setAddressQuery(e.target.value)} 
+                    defaultValue={tmpAddressQuery} 
+                    onInput={e => setTmpAddressQuery(e.target.value)} 
                     onFocus={() => setSearchFocused(true)} 
                     onBlur={() => setTimeout(() => {setSearchFocused(false)}, 150)} />
 
@@ -181,7 +221,6 @@ export default function Reservations() {
                                 loading={loading}
                                 onClick={() => setListFocused(true)}
                                 onSelected={({ lon, lat, text }) => {
-                                    console.log(text)
                                     setAddressQuery(text);
                                     inputAddressSearchRef.current.value = text;
                                     setCoordinates({ lon, lat });
@@ -192,9 +231,9 @@ export default function Reservations() {
             </div>
         </div>
 
-        <Map currentPosition={{latitude: (currentCoordinates.latitude ?? _currentCoordinates.latitude), longitude: (currentCoordinates.longitude ?? _currentCoordinates.longitude)}} 
+        <Map currentPosition={currentPosition} 
              routes={travelRouteItneraire} 
-             addresses={{ start: (currentAddress?.properties.label ?? ''), end: addressQuery }}
+             addresses={addresses}
         />
     </div>);
 };
