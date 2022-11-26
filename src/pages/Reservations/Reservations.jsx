@@ -153,6 +153,8 @@ export default function Reservations() {
     const showList = ((queryResult.features?.length ?? 0) > 0 && searchFocused) || listFocused;
     const showStartList = ((startQueryResult.features?.length ?? 0) > 0 && startSearchFocused) || startListFocused;
 
+    console.log(currentAddress)
+
     return (<div className={styles.container}>
         <div>
             <h1> Réservez une course </h1>
@@ -169,7 +171,7 @@ export default function Reservations() {
                         disabled={true}
                         ref={inputStartAddressSearchRef}
                         className={styles.addressSearch}
-                        defaultValue={currentAddress.properties.label} />)}
+                        defaultValue={currentAddress?.properties.label ?? ''} />)}
 
             {(currentCoordinates.latitude === null || currentCoordinates.longitude === null) && 
                 (<input type='text' 
