@@ -66,10 +66,8 @@ export default function Map({ currentPosition, routes = [], addresses }) {
                     localisationMarker.current?.getElement().remove();
                     
                     routes.map(r => {
-                        r = r.map(c => [...c.reverse()]);
-        
-                        const firstPoint = r[0];
-                        const lastPoint = r[r.length - 1];
+                        const firstPoint = [...r].shift();
+                        const lastPoint = [...r].pop();
         
                         directionsElements.current.startMarker?.getElement().remove();
                         directionsElements.current.endMarker?.getElement().remove();
@@ -78,12 +76,12 @@ export default function Map({ currentPosition, routes = [], addresses }) {
                         directionsElements.current = {
                             ...directionsElements.current,
         
-                            startMarker: L.marker([firstPoint[0], firstPoint[1]])
+                            startMarker: L.marker(firstPoint)
                                 .addTo(initializedMap.current)
                                 .bindPopup(`<center>Départ <br /> ${addresses.start}</center>`)
                                 .openPopup(),
         
-                            endMarker: L.marker([lastPoint[0], lastPoint[1]])
+                            endMarker: L.marker(lastPoint)
                                 .addTo(initializedMap.current)
                                 .bindPopup(`<center>Arrivée <br /> ${addresses.end}</center>`)
                                 .openPopup(),

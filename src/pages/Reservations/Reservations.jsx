@@ -118,7 +118,7 @@ export default function Reservations() {
             })
             .then(json => {
                 setTotalTravelDistance(json.features.map(r => r.properties.summary.distance).reduce((r, c) => r + c, 0));
-                setTravelRouteItneraire(json.features.map(r => r.geometry.coordinates));
+                setTravelRouteItneraire(json.features.map(r => r.geometry.coordinates.map(c => [...c.reverse()])));
             }).catch(err => {
                 console.error(err)
             })
